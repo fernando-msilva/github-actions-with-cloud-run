@@ -37,7 +37,7 @@ jobs:
           region: us-central1
 
       - name: Allow public access to api url
-        run: cloud run services add-iam-policy-binding golang-api --member="allUsers" --role="roles/run.invoker" --platform managed --region us-central1 --project ${{ secrets.PROJECT_ID }}
+        run: gcloud run services add-iam-policy-binding golang-api --member="allUsers" --role="roles/run.invoker" --platform managed --region us-central1 --project ${{ secrets.PROJECT_ID }}
 
       - name: getting api version
         run: curl "${{ steps.deploy.outputs.url }}/version"
