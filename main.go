@@ -21,7 +21,7 @@ var Books []Book
 
 func apiVersion(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint hit: apiVersion")
-	fmt.Fprintf(w, "v0.1")
+	fmt.Fprintf(w, "v0.2")
 }
 
 func getAllBooks(w http.ResponseWriter, r *http.Request) {
@@ -84,7 +84,7 @@ func handleRequest() {
 	myRouter.HandleFunc("/version", apiVersion)
 	myRouter.HandleFunc("/book", getAllBooks).Methods("GET")
 	myRouter.HandleFunc("/book", createNewBook).Methods("POST")
-	//myRouter.HandleFunc("/book/{id}", updateBook).Methods("PUT")
+	myRouter.HandleFunc("/book/{id}", updateBook).Methods("PUT")
 	myRouter.HandleFunc("/book/{id}", deleteBook).Methods("DELETE")
 	myRouter.HandleFunc("/book/{id}", getOneBook)
 	log.Fatal(http.ListenAndServe(":8080", myRouter))
