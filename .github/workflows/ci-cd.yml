@@ -1,0 +1,39 @@
+name: ci-cd
+
+on:
+  push:
+    branches: master
+
+jobs:
+  main:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: build docker image
+        run: docker image build -t gcr.io/${{ secrets.PROJECT_ID }}/golang-api:0.1  .
+
+      - name: getting service account credential
+        run: echo "$GCP_CREDENTIALS" > ./credential.json
+        env:
+          GCP_CREDENTIALS: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: authenticating service account
+        run: gcloud auth activate-service-account --key-file credential.json
+
+      - name: authenticating docker
+        run: gcloud auth configure-docker --quiet
+
+      - name: push docker image
+        run: docker image push gcr.io/${{ secrets.PROJECT_ID }}/golang-api:0.1
+
+      - id: deploy
+        name: deploy to cloud run
+        uses: google-github-actions/deploy-cloudrun@main
+        with:
+          image: gcr.io/${{ secrets.PROJECT_ID }}/golang-api:0.1
+          service: golang-api
+          credentials: ${{ secrets.GCP_CREDENTIALS }}
+
+      - name: getting api version
+        run: curl "${{ steps.deploy.outputs.url }}/version"
