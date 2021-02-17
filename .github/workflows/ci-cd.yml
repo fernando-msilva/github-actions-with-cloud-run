@@ -3,6 +3,8 @@ name: ci-cd
 on:
   push:
     branches: main
+    paths:
+      - "!docker-compose.yml"
 
 jobs:
   main:
